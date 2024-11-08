@@ -1,16 +1,13 @@
-var peliculas = require("./peliculas.json");
+var posts = require("./posts.json");
 
-function getAllPeliculas(){
-    return peliculas;
-}
+function getAllPosts(){ return posts; }
 
-function getPelicula(id){
-    const item = peliculas.filter( (a) => { return(a.id==id)} );
-    return item[0];
-}
+function getPostById(id){ return posts.find(a => a.id == id); }
+
+function getCategories() { return [...new Set(posts.map(post => post.category))]; }
 
 module.exports = {
-    getAllPeliculas,
-    getPelicula
+    getAllPosts,
+    getPostById,
+    getCategories
 }
-

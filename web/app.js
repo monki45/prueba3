@@ -1,41 +1,36 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const express = require('express');
+const path = require('path');
+const dataProvider = require('./data/dataprovider');
+const app = express();
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
-var app = express();
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+app.get('/', (req, res) => {
+  try {
+    const posts = dataProvider.getAllPosts();
+    res.render('index', { posts });
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    res.status(500).send('Error interno del servidor');
+  }
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+app.get('/post/:id', (req, res) => {
+  const postId = parseInt(req.params.id);
+  try {
+    const post = dataProvider.getPostById(postId);
+    if (post) {
+      res.render('post', { post });
+    } else {
+      res.status(404).send('Post no encontrado');
+    }
+  } catch (error) {
+    console.error('Error fetching post:', error);
+    res.status(500).send('Error interno del servidor');
+  }
 });
 
-module.exports = app;
+module.exports = app;

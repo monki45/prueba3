@@ -1,16 +1,48 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-  </body>
+    <header>
+      <%- include ("partials/header.ejs"); %>
+    </header>
+</head>
 
-  <footer>
+<body> 
+<main id="galeria">
+    <h1>Ultimas entradas del blog</h1>
+    <div class="grid-container">
+        <% posts.forEach(post => { %>
+            <figure class="card">
+                <a href="/index/<%= post.id %>">
+                    <img src="<%= post.thumbnail %>" alt="<%= post.title %>">
+                    <figcaption><%= post.title %></figcaption>
+                </a>
+            </figure>
+        <% }) %>
+    </div>
+ 
+    <% if (post) { %>
+        <dialog id="dialogo-post" open>
+            <h2><%= post.title %></h2>
+            <img src="<%= post.image %>" alt="<%= post.title %>">
+            <p><strong>Categoría:</strong> <%= post.category %></p>
+            <p><strong>Intro:</strong> <%= post.intro %></p>
+            <div><%- post.content %></div>
+            <button onclick="cerrarDialogo()">Cerrar</button>
+        </dialog>
+    <% } %>
+</main>
+ 
+<script>
+    function cerrarDialogo() {
+        document.getElementById("dialogo-post").close();
+    }
+</script>
+ 
+<footer>
     <%- include ("partials/footer.ejs"); %>
-  </footer>
-  
+</footer>
+ 
+</body>
 </html>
